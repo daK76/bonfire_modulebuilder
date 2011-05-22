@@ -1,6 +1,7 @@
 ## ModuleBuilder
 
 Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Controllers, views, models, migrations and javascript files are build very quickly by filling out a single form
+
 - Includes form validation
 - Retain POST values on page refresh, form is auto populated with POST
 - Show each field error inline.
