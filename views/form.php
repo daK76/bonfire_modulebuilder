@@ -46,20 +46,9 @@ If DB field type is "enum" or "set", please enter the values using this format: 
 		</div>
 
 		<div class="input_box">
-			<label for="contexts" class="block">Main Context</label>
-			<select name="main_context" id="main_context">
-			<option value="content" <?php echo set_select("main_context", "content"); ?>>Content</option>
-			<option value="statistics" <?php echo set_select("main_context", "stats"); ?>>Statistics</option>
-			<option value="appearance" <?php echo set_select("main_context", "appearance"); ?>>Appearance</option>
-			<option value="settings" <?php echo set_select("main_context", "settings"); ?>>Settings</option>
-			<option value="developer" <?php echo set_select("main_context", "developer"); ?>>Developer</option>
-			<option value="public" <?php echo set_select("main_context", "public"); ?>>Public</option>
-			</select>
-		</div>
-		<div class="input_box">
 			<label for="contexts" class="block">Contexts Required</label>
 			<input name="contexts[]" id="contexts" type="checkbox" value="content" <?php echo set_checkbox("contexts[]", "content"); ?> class="checkbox" /> Content
-			<input name="contexts[]" id="contexts" type="checkbox" value="statistics" <?php echo set_checkbox("contexts[]", "statistics"); ?> class="checkbox" /> Statistics
+			<input name="contexts[]" id="contexts" type="checkbox" value="stats" <?php echo set_checkbox("contexts[]", "stats"); ?> class="checkbox" /> Statistics
 			<input name="contexts[]" id="contexts" type="checkbox" value="appearance" <?php echo set_checkbox("contexts[]", "appearance"); ?> class="checkbox" /> Appearance
 			<input name="contexts[]" id="contexts" type="checkbox" value="settings" <?php echo set_checkbox("contexts[]", "settings"); ?> class="checkbox" /> Settings
 			<input name="contexts[]" id="contexts" type="checkbox" value="developer" <?php echo set_checkbox("contexts[]", "developer"); ?> class="checkbox" /> Developer
@@ -82,6 +71,10 @@ If DB field type is "enum" or "set", please enter the values using this format: 
 			<?php endforeach;?>
 		</div>
 		<br />
+		<div class="input_box">
+			<label for="primary_key_field" class="block">Primary Key</label>
+			<input name="primary_key_field" id="primary_key_field" type="text" value="<?php echo set_value("primary_key_field", 'id'); ?>" />
+		</div>
 		<div class="input_box">
 			<label for="form_input_delimiters" class="block">Form Input Delimiters</label>
 			<input name="form_input_delimiters" id="form_input_delimiters" type="text" value="<?php echo set_value("form_input_delimiters", '<p>,</p>'); ?>" />

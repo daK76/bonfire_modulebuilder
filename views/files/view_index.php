@@ -46,7 +46,7 @@ foreach ($records_array as $row)
 <?php
 	}
 ?>
-				<td><a href="/admin/'.$controller_name.'/'.$module_name_lower.'/update/<?php echo $row["id"];?>">Update</a> | <a href="/admin/'.$controller_name.'/'.$module_name_lower.'/delete/<?php echo $row["id"];?>">Delete</a></td>
+				<td><a href="/admin/'.$controller_name.'/'.$module_name_lower.'/update/<?php echo $row["'.$primary_key_field.'"];?>">Update</a> | <a href="/admin/'.$controller_name.'/'.$module_name_lower.'/delete/<?php echo $row["id"];?>">Delete</a></td>
 			</tr>
 <?php
 }

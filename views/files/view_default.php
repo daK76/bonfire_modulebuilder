@@ -3,12 +3,12 @@
 
 $view = '<?php // Change the css classes to suit your needs    
 
-$attributes = array("class" => "", "id" => "'.$controller_name.'_'.$action_name.'");
+$attributes = array("class" => "", "'.$primary_key_field.'" => "'.$controller_name.'_'.$action_name.'");
 echo form_open("admin/'.$controller_name.'/'.$module_name_lower.'/'.$action_name.''.$id_val.'", $attributes);
 ';
 if($action_name != 'insert' && $action_name != 'add') {
 $view .= '
-echo form_hidden("id", $id);';
+echo form_hidden("'.$primary_key_field.'", $id);';
 }
 $view .= '?>';
 

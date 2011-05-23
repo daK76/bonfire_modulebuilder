@@ -9,7 +9,7 @@ class Migration_Install_'.$module_name_lower.' extends Migration {
 		$prefix = $this->db->dbprefix;
 	
 		// Email Queue
-		$this->dbforge->add_field(\'`id` int(11) NOT NULL AUTO_INCREMENT\');';
+		$this->dbforge->add_field(\'`'.$primary_key_field.'` int(11) NOT NULL AUTO_INCREMENT\');';
 		for($counter=1; $field_total >= $counter; $counter++)
 		{
 			//Due to the requiredif rule if the first field is set the the others must be
@@ -31,7 +31,7 @@ class Migration_Install_'.$module_name_lower.' extends Migration {
 		
 		}
 		$migrations .= '
-		$this->dbforge->add_key(\'id\', true);
+		$this->dbforge->add_key(\''.$primary_key_field.'\', true);
 		$this->dbforge->create_table(\''.$module_name_lower.'\');
 
 	}

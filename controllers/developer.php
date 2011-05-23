@@ -59,11 +59,11 @@ class Developer extends Admin_Controller {
 		$fields_array = array('view_field_name1','view_field_name2','view_field_name3');
 
 		$this->form_validation->set_rules("module_name",'Module Name',"trim|required|xss_clean");
-		$this->form_validation->set_rules("main_context",'Contexts',"required|xss_clean|is_array");
 		$this->form_validation->set_rules("contexts",'Contexts',"required|xss_clean|is_array");
 		$this->form_validation->set_rules("form_action",'Controller Actions',"required|xss_clean|is_array");
 		$this->form_validation->set_rules("db_required",'DB Required',"trim|xss_clean|is_numeric");
 		$this->form_validation->set_rules("ajax_processing",'Ajax Processing',"trim|xss_clean|is_numeric");
+		$this->form_validation->set_rules("primary_key_field",'Primary Key Field',"required|trim|xss_clean");
 		$this->form_validation->set_rules("form_input_delimiters",'Form Input Delimiters',"required|trim|xss_clean");
 		$this->form_validation->set_rules("form_error_delimiters",'Form Error Delimiters',"required|trim|xss_clean");
 		
@@ -110,11 +110,15 @@ class Developer extends Admin_Controller {
 		else // passed validation proceed to second page
 		{
 			$module_name = $this->input->post('module_name');
-			$main_context = $this->input->post('main_context');
 			$contexts = $this->input->post('contexts');
 			$action_names = $this->input->post('form_action');
 			$db_required = isset($_POST['db_required']) ? TRUE : FALSE;
 			$ajax_processing = isset($_POST['ajax_processing']) ? TRUE : FALSE;
+			$primary_key_field = $this->input->post('primary_key_field');
+			if( $primary_key_field == '') {
+				$primary_key_field = $this->options['primary_key_field'];
+			}
+
 			$form_input_delimiters = explode(',', $this->input->post('form_input_delimiters'));
 			if( !is_array($form_input_delimiters) OR count($form_input_delimiters) != 2) {
 				$form_input_delimiters = $this->options['form_input_delimiters'];
@@ -125,7 +129,7 @@ class Developer extends Admin_Controller {
 				$form_error_delimiters = $this->options['$form_error_delimiters'];
 			}
 			
-			$file_data = $this->modulebuilder->build_files($field_total, $module_name, $main_context, $contexts, $action_names, $db_required, $ajax_processing, $form_input_delimiters, $form_error_delimiters);
+			$file_data = $this->modulebuilder->build_files($field_total, $module_name, $contexts, $action_names, $primary_key_field, $db_required, $ajax_processing, $form_input_delimiters, $form_error_delimiters);
 
 			// make the variables available to the view file		
 			$data['module_name'] = $module_name;

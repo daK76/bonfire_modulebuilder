@@ -20,7 +20,7 @@ class '.ucfirst($controller_name).'_model extends CI_Model {
 	 */
 	function get($id)
 	{
-		$query = $this->db->get_where("'.$controller_name.'", array("id" => $id));
+		$query = $this->db->get_where("'.$controller_name.'", array("'.$primary_key_field.'" => $id));
 			
 		return $query->row_array();
 	}
@@ -60,7 +60,7 @@ $model .= '
 				$action_name = 'update';
 			}
 			$model .= '
-		$this->db->where("id", $form_data["id"]);			
+		$this->db->where("'.$primary_key_field.'", $form_data["'.$primary_key_field.'"]);			
 		$this->db->'.$action_name.'("'.$controller_name.'", $form_data);';
 		}
 		else {

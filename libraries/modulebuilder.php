@@ -34,6 +34,7 @@ class Modulebuilder
 		$this->CI->load->helper('file');
 		$this->CI->load->helper('download');
 		$this->CI->load->helper('security');
+		$this->CI->load->config('modulebuilder');
 		$this->options = $this->CI->config->item( 'modulebuilder' );
 
 		// filenames 
@@ -47,12 +48,11 @@ class Modulebuilder
 
 	}
 	
-	public function build_files($field_total, $module_name, $main_context, $contexts, $action_names, $db_required, $ajax_processing, $form_input_delimiters, $form_error_delimiters) {
+	public function build_files($field_total, $module_name, $contexts, $action_names, $primary_key_field, $db_required, $ajax_processing, $form_input_delimiters, $form_error_delimiters) {
 		
 		// filenames 
 		$this->files = array(
 							'model' => $module_name.'_model',
-							'controller' => $main_context,
 							'javascript'  => $module_name,
 							'sql'  => 'sql',
 							);
@@ -73,23 +73,23 @@ class Modulebuilder
 				if($context_name == 'public') {
 					$context_name = $module_file_name;
 				}
-				$content['controllers'][$context_name] = $this->build_controller($field_total, $module_name, $context_name, $action_names, $db_required, $form_error_delimiters);
+				$content['controllers'][$context_name] = $this->build_controller($field_total, $module_name, $context_name, $action_names, $primary_key_field, $db_required, $form_error_delimiters);
 
 				// view files
 				foreach($action_names as $key => $action_name) {
 
-					$content['views'][$context_name][$action_name] = $this->build_view($field_total, $module_name, $context_name, $action_name, $this->options['form_action_options'][$action_name], $form_input_delimiters);
+					$content['views'][$context_name][$action_name] = $this->build_view($field_total, $module_name, $context_name, $action_name, $this->options['form_action_options'][$action_name], $primary_key_field, $form_input_delimiters);
 				}
 			}
 			// db based files - model and sql
 			if( $db_required ) {
-				$content['sql'] =  $this->build_sql($field_total, $module_file_name);
-				$content['model'] = $this->build_model($field_total, $module_file_name, $action_names);
+				$content['sql'] =  $this->build_sql($field_total, $module_file_name, $primary_key_field);
+				$content['model'] = $this->build_model($field_total, $module_file_name, $action_names, $primary_key_field);
 			}
 			// javascript
 			if( $ajax_processing ) {
 
-				$content['javascript'] = $this->build_javascript($field_total, $module_file_name, $action_names);
+				$content['javascript'] = $this->build_javascript($field_total, $module_file_name, $action_names, $primary_key_field);
 			}
 		}
 
@@ -237,7 +237,7 @@ class Modulebuilder
     * @return string
     *
     */
-	private function build_view($field_total, $module_name, $controller_name, $action_name, $action_label, $form_input_delimiters)
+	private function build_view($field_total, $module_name, $controller_name, $action_name, $action_label, $primary_key_field, $form_input_delimiters)
 	{
 		if ($field_total == NULL)
 		{
@@ -249,6 +249,7 @@ class Modulebuilder
 		$data['module_name_lower'] = strtolower($module_name);
 		$data['controller_name'] = $controller_name;
 		$data['action_name'] = $action_name;
+		$data['primary_key_field'] = $primary_key_field;
 		$data['action_label'] = $action_label;
 		$data['form_input_delimiters'] = $form_input_delimiters;
 
@@ -284,7 +285,7 @@ class Modulebuilder
     * @return string
  	*
 	*/
-	private function build_controller($field_total, $module_name, $controller_name, $action_names, $db_required, $form_error_delimiters)
+	private function build_controller($field_total, $module_name, $controller_name, $action_names, $primary_key_field, $db_required, $form_error_delimiters)
 	{
 		if ($field_total == NULL)
 		{
@@ -295,8 +296,9 @@ class Modulebuilder
 		$data['module_name'] = $module_name;
 		$data['module_name_lower'] = strtolower($module_name);
 		$data['controller_name'] = $controller_name;
-		$data['db_required'] = $db_required;
 		$data['action_names'] = $action_names;
+		$data['primary_key_field'] = $primary_key_field;
+		$data['db_required'] = $db_required;
 		$data['form_error_delimiters'] = $form_error_delimiters;
 		$controller = $this->CI->load->view('files/controller', $data, TRUE);
 		return $controller;            
@@ -313,7 +315,7 @@ class Modulebuilder
     * @return string
     */
 
-	private function build_model($field_total, $module_name, $action_names)
+	private function build_model($field_total, $module_name, $action_names, $primary_key_field)
 	{
 		if ($field_total == NULL)
 		{
@@ -323,6 +325,7 @@ class Modulebuilder
 		$data['field_total'] = $field_total;
 		$data['controller_name'] = $module_name;
 		$data['action_names'] = $action_names;
+		$data['primary_key_field'] = $primary_key_field;
 		$model = $this->CI->load->view('files/model', $data, TRUE);
 
 		return $model;
@@ -340,7 +343,7 @@ class Modulebuilder
  	*
 	*/
 
-	private function build_javascript($field_total, $controller_name, $action_names)
+	private function build_javascript($field_total, $controller_name, $action_names, $primary_key_field)
 	{
 		if ($field_total == NULL)
 		{
@@ -350,6 +353,7 @@ class Modulebuilder
 		$data['field_total'] = $field_total;
 		$data['controller_name'] = $controller_name;
 		$data['action_names'] = $action_names;
+		$data['primary_key_field'] = $primary_key_field;
 		$javascript = $this->CI->load->view('files/javascript', $data, TRUE);
 		
 		return $javascript;
@@ -364,7 +368,7 @@ class Modulebuilder
     * @return string
     */
 
-	private function build_sql($field_total, $module_name)
+	private function build_sql($field_total, $module_name, $primary_key_field)
 	{
 		if ($field_total == NULL)
 		{
@@ -373,45 +377,10 @@ class Modulebuilder
 		$data['field_total'] = $field_total;
 		$data['module_name'] = $module_name;
 		$data['module_name_lower'] = strtolower($module_name);
+		$data['primary_key_field'] = $primary_key_field;
 		$sql = $this->CI->load->view('files/migrations', $data, TRUE);
-/*
-		$sql = 'CREATE TABLE IF NOT EXISTS  `'.$controller_name.'` (
- id int(40) NOT NULL auto_increment,';
-		
-		for($counter=1; $field_total >= $counter; $counter++)
-		{
-			//Due to the requiredif rule if the first field is set the the others must be
-			if (set_value("view_field_label$counter") == NULL)
-			{
-				continue; 	// move onto next iteration of the loop
-			}
-
-		$sql .= '
- '.set_value("view_field_name$counter").' '.set_value("db_field_type$counter");
-		
-			if (!in_array(set_value("db_field_type$counter"), array('TEXT', 'DATETIME'))) // There are no doubt more types where a value/length isn't possible - needs investigating
-			{
-				$sql .= '('.set_value("db_field_length_value$counter").')';
-			}
-		
-
-		$sql .= ' NOT NULL,';
-		
-		}
-		
-		$sql .= '
- PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
- * 
- */
 		
 		return $sql;
-		
-		
-		// ip_address varchar(16) DEFAULT '0' NOT NULL,
-		// user_agent varchar(50) NOT NULL,
-		// last_activity int(10) unsigned DEFAULT 0 NOT NULL,
-		// user_data text NOT NULL,
 	}
 	
 	// --------------------------------------------------------------------
@@ -464,47 +433,6 @@ class Modulebuilder
 		return is_dir($pathname) || @mkdir($pathname, $mode);
    	}
    
-	// --------------------------------------------------------------------
-
-    /**
-     * Read a directory and add it to the zip.
-     *
-     * This is a customised version of the standard zip library function
-     * The directory structure is removed and a readmefile is included if it exists
-     * 
-     * This function recursively reads a folder and everything it contains (including
-     * sub-folders) and creates a zip based on it.  Whatever directory structure
-     * is in the original file path will be recreated in the zip file.
-     *
-     * @access	public
-     * @param	string	path to source
-     * @return	bool
-     */	
-
-	private function read_dir($orig_path, $new_path = '')
-	{
-		$dir_path = $this->options['output_path'].$orig_path.$new_path;
-
-		if ($fp = @opendir($dir_path))
-		{
-			while (FALSE !== ($file = readdir($fp)))
-        	{
-				if (@is_dir($this->options['output_path'].$orig_path.$new_path.$file) && substr($file, 0, 1) != '.')
-				{
-					$this->read_dir($orig_path.$new_path, $file."/");
-        		}
-				elseif (substr($file, 0, 1) != ".")
-        		{
-					if (FALSE !== ($data = file_get_contents($this->options['output_path'].$orig_path."/".$new_path.$file)))
-        			{
-						$this->CI->zip->add_data($orig_path.$new_path.$file, $data);
-        			}
-        		}
-        	}
-    
-            return TRUE;
-        }
-	}
 
 	// --------------------------------------------------------------------
 }

@@ -19,10 +19,10 @@ $(document).ready(function() {
 			}
 			$vars .= '
 		var '. set_value("view_field_name$counter").' = $("#'. set_value("view_field_name$counter").'").val();';
-			$passing_vars .= ''. set_value("view_field_name$counter").' : '. set_value("view_field_name$counter").'';
-			if($field_total > $counter) {
+			if($passing_vars != '') {
 				$passing_vars .= ', ';
 			}
+			$passing_vars .= ''. set_value("view_field_name$counter").' : '. set_value("view_field_name$counter").'';
 			$error_vars .= '
 			$("#'. set_value("view_field_name$counter").'_error").html(data.'. set_value("view_field_name$counter").');';
 		}
@@ -30,14 +30,16 @@ $(document).ready(function() {
 		?>
 		var id_val = '';
 <?php if($action_name != 'insert'): ?>
-		if( typeof($("#id").val()) != 'undefined' ) {
-			id_val = '/' + $("#id").val();
+		if( typeof($("#<?php echo $primary_key_field;?>").val()) != 'undefined' ) {
+			id_val = '/' + $("#<?php echo $primary_key_field;?>").val();
+<?php endif; ?>
+			$.post("/<?php echo $controller_name;?>/<?php echo $action_name;?>" + id_val, { <?php echo $passing_vars;?> }, function(data){
+				<?php echo $error_vars;?>
+
+			},'json');
+<?php if($action_name != 'insert'): ?>
 		}
 <?php endif; ?>
-		$.post("/<?php echo $controller_name;?>/<?php echo $action_name;?>" + id_val, { <?php echo $passing_vars;?> }, function(data){
-			<?php echo $error_vars;?>
-		
-		},'json');
 	});
 <?php endforeach;?>
 });

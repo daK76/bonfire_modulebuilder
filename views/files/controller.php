@@ -81,7 +81,7 @@ $controller .= '
 				continue; 	// move onto next iteration of the loop
 			}
 			
-			if($action_name == 'delete' AND set_value("view_field_name$counter") != 'id') {
+			if($action_name == 'delete' AND set_value("view_field_name$counter") != $primary_key_field) {
 				continue;
 			}
 			
@@ -214,9 +214,9 @@ $controller .= '
 		}
 		$controller .= '
 					);
-		$id = set_value("id");
-		if( $id != "") {
-			$form_data["id"] = $id;
+		$id = set_value("'.$primary_key_field.'");
+		if( !empty($id) ) {
+			$form_data["'.$primary_key_field.'"] = $id;
 		}
 		return $form_data;
 	}
