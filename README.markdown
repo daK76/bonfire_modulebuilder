@@ -14,7 +14,6 @@ Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Contro
 ## What now
 - Navigate to the /admin/developer/modulebuilder page
 - Fill in your fields on the form
-- NOTE: "id" fields is added automatically
 - Click Build
 - You will see the list of generated files
 - If generated, rename the Migrations file (adding the correct number) and move it into the db/migrations folder
@@ -35,6 +34,11 @@ Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Contro
 														'update' => 'Update', 
 														'delete' => 'Delete');
 	
+	/*
+	 * default primary key field
+	 */
+	$config[ 'modulebuilder' ][ 'primary_key_field' ] = 'id';
+
     /*
     * html tags used around the form elements
     */
