@@ -49,7 +49,7 @@ If DB field type is "enum" or "set", please enter the values using this format: 
 			<label for="contexts" class="block">Main Context</label>
 			<select name="main_context" id="main_context">
 			<option value="content" <?php echo set_select("main_context", "content"); ?>>Content</option>
-			<option value="statistics" <?php echo set_select("main_context", "statistics"); ?>>Statistics</option>
+			<option value="statistics" <?php echo set_select("main_context", "stats"); ?>>Statistics</option>
 			<option value="appearance" <?php echo set_select("main_context", "appearance"); ?>>Appearance</option>
 			<option value="settings" <?php echo set_select("main_context", "settings"); ?>>Settings</option>
 			<option value="developer" <?php echo set_select("main_context", "developer"); ?>>Developer</option>
