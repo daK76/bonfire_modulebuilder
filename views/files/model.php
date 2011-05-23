@@ -1,6 +1,6 @@
 <?php
 
-$model = '<?php
+$model = '<?php if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');
 
 class '.ucfirst($controller_name).'_model extends CI_Model {
 

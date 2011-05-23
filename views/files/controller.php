@@ -1,6 +1,6 @@
 <?php
 
-$controller = '<?php 
+$controller = '<?php if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');
 
 class '.ucfirst($controller_name).' extends Admin_Controller {
                
