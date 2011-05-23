@@ -195,7 +195,7 @@ class Modulebuilder
 							$ext = 'js';
 							break;
 						case 'sql':
-							$file_name = "Migrations_Install_".$file_name;
+							$file_name = "Install_".$file_name;
 							break;
 						case 'model':
 							$file_name .= "_model";
