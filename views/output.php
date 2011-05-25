@@ -40,11 +40,6 @@ MVC+SQL as .zip - <a href="/<?php echo $cur_url."/download/{$module_name}"?>">Do
 	<?php endforeach; ?>
 	</p>
 
-<?php if($javascript): ?>
-	<h4>Javascript file</h4>
-	<p><?php echo $module_name_lower;?>.js</p>
-<?php endif; ?>
-
 <?php if($sql): ?>
 	<h4>SQL file</h4>
 	<p><?php echo $module_name_lower;?>.sql</p>

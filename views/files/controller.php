@@ -2,7 +2,9 @@
 
 $controller = '<?php if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');
 
-class '.ucfirst($controller_name).' extends Admin_Controller {
+class '.ucfirst($controller_name).' extends ';
+$controller .= $controller_name == $module_name_lower ? "Front_controller" : "Admin_Controller";
+$controller .= ' {
                
 	function __construct()
 	{
@@ -16,7 +18,7 @@ class '.ucfirst($controller_name).' extends Admin_Controller {
 		}
 $controller .= '
 
-		$this->form_validation->set_error_delimiters("'.$form_error_delimiters[0].'", "'.$form_error_delimiters[1].'");
+		Assets::add_js($this->load->view(\''.$controller_name.'/js\', null, true), \'inline\');
 	}
 	
 	';
@@ -31,11 +33,7 @@ $controller .= '
 	 */
 	function index()
 	{
-		$data = array();
-		$data["records_array"] = $this->'.$module_name_lower.'_model->get_all();
-
-		Template::set_view("'.$controller_name.'/index");
-		Template::set("data", $data);
+		Template::set(\'records\', $this->'.$module_name_lower.'_model->find_all());
 		if (!Template::get("toolbar_title"))
 		{
 			Template::set("toolbar_title", "Manage '.$module_name.'");
@@ -45,30 +43,91 @@ $controller .= '
 	
 	';
 	}
-
-	foreach($action_names as $key => $action_name) {
-
-		if ($action_name == 'index')
-		{
-			continue; 	// move onto next iteration of the loop
-		}
-
-		$id_val = '';
-		if($action_name != 'insert' && $action_name != 'add') {
-			$id_val = '$id';
-		}
-$controller .= '
 	
-	/** 
-	 * function '.$action_name.'
-	 *
-	 * '.$action_name.' form data
-	 */
-	function '.$action_name.'('.$id_val.')
-	{';
-
-
-		// loop to set form validation rules
+	if(in_array('create', $action_names) ) {
+		$controller .= '
+	public function create() 
+	{
+		if ($this->input->post(\'submit\'))
+		{
+			if ($this->save_'.$module_name_lower.'())
+			{
+				Template::set_message(\''.$module_name.' successfully created.\', \'success\');
+				Template::redirect(\'/admin/'.$controller_name.'/'.$module_name_lower.'\');
+			}
+			else 
+			{
+				Template::set_message(\'There was a problem creating the '.$module_name_lower.': \'. $this->'.$module_name_lower.'_model->error, \'error\');
+			}
+		}
+	
+		Template::set(\'toolbar_title\', \'Create New '.$module_name.'\');
+		Template::set_view(\''.$controller_name.'/create\');
+		Template::render();
+	}
+			';
+	}
+	
+	if( in_array('edit', $action_names) ) {
+		$controller .= '
+	public function edit() 
+	{
+		$id = (int)$this->uri->segment(5);
+		
+		if (empty($id))
+		{
+			Template::set_message(\'Invalid '.$module_name.' ID.\', \'error\');
+			redirect(\'/admin/'.$controller_name.'/'.$module_name_lower.'\');
+		}
+	
+		if ($this->input->post(\'submit\'))
+		{
+			if ($this->save_'.$module_name_lower.'(\'update\', $id))
+			{
+				Template::set_message(\''.$module_name.' successfully saved.\', \'success\');
+			}
+			else 
+			{
+				Template::set_message(\'There was a problem saving the '.$module_name_lower.': \'. $this->'.$module_name_lower.'_model->error, \'error\');
+			}
+		}
+		
+		Template::set(\''.$module_name_lower.'\', $this->'.$module_name_lower.'_model->find($id));
+	
+		Template::set(\'toolbar_title\', \'Edit '.$module_name.'\');
+		Template::set_view(\''.$controller_name.'/edit\');
+		Template::render();		
+	}
+	
+			';
+	}
+	
+	if(in_array('delete', $action_names) ) {
+		$controller .= '
+	public function delete() 
+	{	
+		$id = $this->uri->segment(5);
+	
+		if (!empty($id))
+		{	
+			if ($this->'.$module_name_lower.'_model->delete($id))
+			{
+				Template::set_message(\'The '.$module_name.' was successfully deleted.\', \'success\');
+			} else
+			{
+				Template::set_message(\'We could not delete the '.$module_name_lower.': \'. $this->'.$module_name_lower.'_model->error, \'error\');
+			}
+		}
+		
+		redirect(\'/admin/'.$controller_name.'/'.$module_name_lower.'\');
+	}
+		';
+	}
+	
+	$controller .= '
+	public function save_'.$module_name_lower.'($type=\'insert\', $id=0) 
+	{	
+';
 		$last_field = 0;
 		for($counter=1; $field_total >= $counter; $counter++)
 		{
@@ -79,10 +138,6 @@ $controller .= '
 			if (set_value("view_field_label$counter") == NULL)
 			{
 				continue; 	// move onto next iteration of the loop
-			}
-			
-			if($action_name == 'delete' AND set_value("view_field_name$counter") != $primary_key_field) {
-				continue;
 			}
 			
 			// we set this variable as it will be used to place the comma after the last item to build the insert db array
@@ -124,102 +179,32 @@ $controller .= '
 			
 			$controller .= "');";
 		}
-	
-		$controller .= '
-			
-		if ($this->form_validation->run() == FALSE) // validation hasn\'t been passed
+$controller .= '
+		if ($this->form_validation->run() === false)
 		{
-			$data = array();
-			';
-			if($action_name != 'insert' && $action_name != 'add') {
-				$controller .= '
-			$data = $this->'.$module_name_lower.'_model->get($id);
-				';
-			}
-			else {
-				$controller .= '
-			$data = $this->_get_form_data();
-				';
-			}
-			
-			$controller .= '
-			Template::set_view("'.$controller_name.'/'.$action_name.'");
-			Template::set("data", $data);
-			if (!Template::get("toolbar_title"))
-			{
-				Template::set("toolbar_title", "Manage '.$module_name.'");
-			}
-			Template::render();
+			return false;
 		}
-		else // passed validation proceed to post success logic
-		{
-		 	// build data array
-			$form_data = $this->_get_form_data();';
-		if($action_name != 'insert' && $action_name != 'add') {
-			$controller .= '
-			$form_data["id"] = $id;';
-		}
-
-		if( $db_required ) {
-		$controller .= '
-					
-			// run insert model to write data to db
 		
-			if ($this->'.$module_name_lower.'_model->'.$action_name.'($form_data) == TRUE)
-			{
-				// the data was processed successfully
-				Template::set_message("'.$action_name.' Successful", "success");
-			}
-			else
-			{
-				// the data was NOT processed successfully
-				Template::set_message("'.$action_name.' Failed","error");
-			}
-			redirect("admin/'.$controller_name.'/'.$module_name_lower.'");';
-		}
-		else {
-		$controller .= '
-			// Process the form here
-			Template::set_message("'.$action_name.' Validation passed", "success");';
-			
-		}
-		$controller .= '
-		}
-
-	}';
-	} // end foreach
-	
-	$controller .= '
-		
-	function _get_form_data()
-	{
-		$form_data = array(';
-		// loop to build form data array
-		for($counter=1; $field_total >= $counter; $counter++)
+		if ($type == \'insert\')
 		{
-			//Due to the requiredif rule if the first field is set the the others must be
-			if (set_value("view_field_label$counter") == NULL)
-			{
-				continue; 	// move onto next iteration of the loop
-			}
+			$id = $this->'.$module_name_lower.'_model->insert($_POST);
 			
-			$controller .= '
-						"'.set_value("view_field_name$counter").'" => set_value("'.set_value("view_field_name$counter").'")';
-			
-			if ($counter != $last_field)
+			if (is_numeric($id))
 			{
-				// add the comma in
-				$controller .= ',';
+				$return = true;
+			} else
+			{
+				$return = false;
 			}
 		}
-		$controller .= '
-					);
-		$id = set_value("'.$primary_key_field.'");
-		if( !empty($id) ) {
-			$form_data["'.$primary_key_field.'"] = $id;
+		else if ($type == \'update\')
+		{
+			$return = $this->'.$module_name_lower.'_model->update($id, $_POST);
 		}
-		return $form_data;
+		
+		return $return;
 	}
+
 }
 ';
 	

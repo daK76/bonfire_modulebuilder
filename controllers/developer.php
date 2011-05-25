@@ -62,7 +62,6 @@ class Developer extends Admin_Controller {
 		$this->form_validation->set_rules("contexts",'Contexts',"required|xss_clean|is_array");
 		$this->form_validation->set_rules("form_action",'Controller Actions',"required|xss_clean|is_array");
 		$this->form_validation->set_rules("db_required",'DB Required',"trim|xss_clean|is_numeric");
-		$this->form_validation->set_rules("ajax_processing",'Ajax Processing',"trim|xss_clean|is_numeric");
 		$this->form_validation->set_rules("primary_key_field",'Primary Key Field',"required|trim|xss_clean");
 		$this->form_validation->set_rules("form_input_delimiters",'Form Input Delimiters',"required|trim|xss_clean");
 		$this->form_validation->set_rules("form_error_delimiters",'Form Error Delimiters',"required|trim|xss_clean");
@@ -113,7 +112,6 @@ class Developer extends Admin_Controller {
 			$contexts = $this->input->post('contexts');
 			$action_names = $this->input->post('form_action');
 			$db_required = isset($_POST['db_required']) ? TRUE : FALSE;
-			$ajax_processing = isset($_POST['ajax_processing']) ? TRUE : FALSE;
 			$primary_key_field = $this->input->post('primary_key_field');
 			if( $primary_key_field == '') {
 				$primary_key_field = $this->options['primary_key_field'];
@@ -129,7 +127,7 @@ class Developer extends Admin_Controller {
 				$form_error_delimiters = $this->options['$form_error_delimiters'];
 			}
 			
-			$file_data = $this->modulebuilder->build_files($field_total, $module_name, $contexts, $action_names, $primary_key_field, $db_required, $ajax_processing, $form_input_delimiters, $form_error_delimiters);
+			$file_data = $this->modulebuilder->build_files($field_total, $module_name, $contexts, $action_names, $primary_key_field, $db_required, $form_input_delimiters, $form_error_delimiters);
 
 			// make the variables available to the view file		
 			$data['module_name'] = $module_name;

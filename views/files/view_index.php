@@ -1,18 +1,51 @@
 <?php
 
 $view = '
-<div class="box create rounded">
-	<a class="button good" href="/admin/'.$controller_name.'/'.$module_name_lower.'/insert">Create New '.$module_name.'</a>
+<div class="view split-view">
+	
+	<!-- Role List -->
+	<div class="view">
+	
+	<?php if (isset($records) && is_array($records) && count($records)) : ?>
+		<div class="scrollable">
+			<div class="list-view" id="role-list">
+				<?php foreach ($records as $record) : ?>
+					<?php $record = (array)$record;?>
+					<div class="list-item" data-id="<?php echo $record[\''.$primary_key_field.'\']; ?>">
+						<p>
+							<b><?php echo $record[\''.$primary_key_field.'\']; ?></b><br/>
+							<span class="small">Edit this to suit your needs</span>
+						</p>
+					</div>
+				<?php endforeach; ?>
+			</div>	<!-- /list-view -->
+		</div>
+	
+	<?php else: ?>
+	
+	<div class="notification attention">
+		<p>There aren\'t any '.$module_name_lower.' in the system. <?php echo anchor(\'admin/'.$controller_name.'/'.$module_name_lower.'/create\', \'Create a new '.$module_name.'.\', array("class" => "ajaxify")) ?></p>
+	</div>
+	
+	<?php endif; ?>
+	</div>
+	<!-- Role Editor -->
+	<div id="content" class="view">
+		<div class="scrollable" id="ajax-content">
+				
+			<div class="box create rounded">
+				<a class="button good ajaxify" href="/admin/'.$controller_name.'/'.$module_name_lower.'/create">Create New '.$module_name.'</a>
 
-	<h3>Create A New '.$module_name.'</h3>
+				<h3>Create A New '.$module_name.'</h3>
 
-	<p>Every user needs a '.$module_name.'. Make sure you have all that you need.</p>
-</div>
-<div>
-	<h2></h2>
+				<p>Edit this text as you see fit.</p>
+			</div>
+			<br />
+				<?php if (isset($records) && is_array($records) && count($records)) : ?>
+				
+					<h2>'.$module_name.'</h2>
 	<table>
-		<thead>
-		<th>ID</th>';
+		<thead>';
 
 for($counter=1; $field_total >= $counter; $counter++)
 {
@@ -32,28 +65,31 @@ $view .= '<th>Actions</th>
 		</thead>
 		<tbody>
 <?php
-foreach ($records_array as $row)
-{
-	$last_field = 0;
-	?>
+foreach ($records as $record) : ?>
+<?php $record = (array)$record;?>
 			<tr>
 <?php
-	foreach($row as $field => $value)
+	foreach($record as $field => $value)
 	{
+		if($field != "'.$primary_key_field.'") {
 ?>
 				<td><?php echo $value;?></td>
 
 <?php
+		}
 	}
 ?>
-				<td><a href="/admin/'.$controller_name.'/'.$module_name_lower.'/update/<?php echo $row["'.$primary_key_field.'"];?>">Update</a> | <a href="/admin/'.$controller_name.'/'.$module_name_lower.'/delete/<?php echo $row["id"];?>">Delete</a></td>
+				<td><?php echo anchor(\'admin/'.$controller_name.'/'.$module_name_lower.'/edit/\'. $record[\''.$primary_key_field.'\'], \'Edit\', \'class="ajaxify"\') ?></td>
 			</tr>
-<?php
-}
-?>
+<?php endforeach; ?>
 		</tbody>
 	</table>
-</div>';
+				<?php endif; ?>
+				
+		</div>	<!-- /ajax-content -->
+	</div>	<!-- /content -->
+</div>
+';
 
 	echo $view;
 ?>

@@ -48,12 +48,11 @@ class Modulebuilder
 
 	}
 	
-	public function build_files($field_total, $module_name, $contexts, $action_names, $primary_key_field, $db_required, $ajax_processing, $form_input_delimiters, $form_error_delimiters) {
+	public function build_files($field_total, $module_name, $contexts, $action_names, $primary_key_field, $db_required, $form_input_delimiters, $form_error_delimiters) {
 		
 		// filenames 
 		$this->files = array(
 							'model' => $module_name.'_model',
-							'javascript'  => $module_name,
 							'sql'  => 'sql',
 							);
 
@@ -61,7 +60,6 @@ class Modulebuilder
 		$content['views'] = FALSE;
 		$content['controllers'] = FALSE;
 		$content['model'] = FALSE;
-		$content['javascript'] = FALSE;
 		$content['sql'] = FALSE;
 
 		// Build the files
@@ -77,19 +75,16 @@ class Modulebuilder
 
 				// view files
 				foreach($action_names as $key => $action_name) {
-
-					$content['views'][$context_name][$action_name] = $this->build_view($field_total, $module_name, $context_name, $action_name, $this->options['form_action_options'][$action_name], $primary_key_field, $form_input_delimiters);
+					if ($action_name != 'delete' ) {
+						$content['views'][$context_name][$action_name] = $this->build_view($field_total, $module_name, $context_name, $action_name, $this->options['form_action_options'][$action_name], $primary_key_field, $form_input_delimiters);
+					}
 				}
+				$content['views'][$context_name]['js'] = $this->build_view($field_total, $module_name, $context_name, 'js', $this->options['form_action_options'][$action_name], $primary_key_field, $form_input_delimiters);
 			}
 			// db based files - model and sql
 			if( $db_required ) {
 				$content['sql'] =  $this->build_sql($field_total, $module_file_name, $primary_key_field);
 				$content['model'] = $this->build_model($field_total, $module_file_name, $action_names, $primary_key_field);
-			}
-			// javascript
-			if( $ajax_processing ) {
-
-				$content['javascript'] = $this->build_javascript($field_total, $module_file_name, $action_names, $primary_key_field);
 			}
 		}
 
@@ -121,7 +116,6 @@ class Modulebuilder
 		$data['views'] = $content['views'];
 		$data['controllers'] = $content['controllers'];
 		$data['model'] = $content['model'];
-		$data['javascript'] = $content['javascript'];
 		$data['sql'] = $content['sql'];
 
 		return $data;
@@ -191,9 +185,6 @@ class Modulebuilder
 					$file_name = $module_name;
 					switch ($type)
 					{
-						case 'javascript':
-							$ext = 'js';
-							break;
 						case 'sql':
 							$file_name = "Install_".$file_name;
 							break;
@@ -255,7 +246,7 @@ class Modulebuilder
 
 		$id_val = '';
 		if($action_name != 'insert' && $action_name != 'add') {
-			$id_val = '/$id';
+			$id_val = '$id';
 		}
 		$data['id_val'] = $id_val;
 		
@@ -265,6 +256,9 @@ class Modulebuilder
 		}
 		elseif( $action_name == 'delete' ) {
 			$view_name = 'delete';
+		}
+		elseif( $action_name == 'js' ) {
+			$view_name = 'js';
 		}
 	
 		$view = $this->CI->load->view('files/view_'.$view_name, $data, TRUE);
@@ -333,31 +327,6 @@ class Modulebuilder
 	
 	// --------------------------------------------------------------------
 
-   /** 
-    * function build_javascript()
-    *
-    * write view file
-    * @access private
-    * @param integer $field_total
-    * @return string
- 	*
-	*/
-
-	private function build_javascript($field_total, $controller_name, $action_names, $primary_key_field)
-	{
-		if ($field_total == NULL)
-		{
-			return FALSE;
-		}
-		  
-		$data['field_total'] = $field_total;
-		$data['controller_name'] = $controller_name;
-		$data['action_names'] = $action_names;
-		$data['primary_key_field'] = $primary_key_field;
-		$javascript = $this->CI->load->view('files/javascript', $data, TRUE);
-		
-		return $javascript;
-	}
 	
    /** 
     * function build_sql()

@@ -1,15 +1,19 @@
-<br />
 <?php
 
-$view = '<?php // Change the css classes to suit your needs    
-
-$attributes = array("class" => "", "'.$primary_key_field.'" => "'.$controller_name.'_'.$action_name.'");
-echo form_open("admin/'.$controller_name.'/'.$module_name_lower.'/'.$action_name.''.$id_val.'", $attributes);
-';
-if($action_name != 'insert' && $action_name != 'add') {
-$view .= '
-echo form_hidden("'.$primary_key_field.'", $id);';
+$view = '
+<?php if (validation_errors()) : ?>
+<div class="notification error">
+	<?php echo validation_errors(); ?>
+</div>
+<?php endif; ?>
+<?php // Change the css classes to suit your needs    
+if( isset($'.$module_name_lower.') ) {
+	$'.$module_name_lower.' = (array)$'.$module_name_lower.';
 }
+$id = isset($'.$module_name_lower.'[\''.$primary_key_field.'\']) ? "/".$'.$module_name_lower.'[\''.$primary_key_field.'\'] : \'\';
+$attributes = array("class" => "constrained ajax-form", "'.$primary_key_field.'" => "'.$controller_name.'_'.$action_name.'");
+echo form_open("admin/'.$controller_name.'/'.$module_name_lower.'/'.$action_name.'" . $id, $attributes);
+';
 $view .= '?>';
 
 for($counter=1; $field_total >= $counter; $counter++)
@@ -78,18 +82,13 @@ EOT;
 	case('textarea'):
 		
 		$view .= "
-	<?php echo form_error('$field_name'); ?>
-	
-							
-	<?php echo form_textarea( array( 'name' => '$field_name', 'rows' => '5', 'cols' => '80', 'value' => set_value('$field_name', $".$field_name.") ) )?>
-</p>";
+	<?php echo form_textarea( array( 'name' => '$field_name', 'rows' => '5', 'cols' => '80', 'value' => set_value('$field_name', isset(\${$module_name_lower}['{$field_name}']) ? \${$module_name_lower}['{$field_name}'] : '') ) )?>
+".$form_input_delimiters[1];
 		break;
 						
 	case('radio'):
                         
 		$view .= '
-        <?php echo form_error(\''.$field_name.'\'); ?>
-        
 		<?php // Change or Add the radio values/labels/css classes to suit your needs ?>
 		<input id="'.$field_name.'" name="'.$field_name.'" type="radio" class="" value="option1" <?php echo $this->CI->form_validation->set_radio(\''.$field_name.'\', \'option1\'); ?> />
 		'. form_label('Radio option 1', $field_name) .'
@@ -105,8 +104,6 @@ EOT;
 	// decided to use ci form helper here as I think it makes selects/dropdowns a lot easier
 	$view .= <<<EOT
 
-        <?php echo form_error('{$field_name}'); ?>
-        
         <?php // Change the values in this array to populate your dropdown as required ?>
         
 EOT;
@@ -126,8 +123,6 @@ EOT;
 
 	$view .= <<<EOT
 
-        <?php echo form_error('{$field_name}'); ?>
-        
         <?php // Change the values/css classes to suit your needs ?>
         <br /><input type="checkbox" id="{$field_name}" name="{$field_name}" value="1" class="" <?php echo set_checkbox('{$field_name}', '1'); ?>> 
     <?php echo form_label('{$field_label}', '{$field_name}'); ?>               
@@ -155,8 +150,7 @@ EOT;
 
 		$view .= <<<EOT
 
-        <?php echo form_error('{$field_name}'); ?>
-        <input id="{$field_name}" type="{$type}" name="{$field_name}" {$maxlength} value="<?php echo set_value('{$field_name}', \${$field_name}); ?>"  />
+        <input id="{$field_name}" type="{$type}" name="{$field_name}" {$maxlength} value="<?php echo set_value('{$field_name}', isset(\${$module_name_lower}['{$field_name}']) ? \${$module_name_lower}['{$field_name}'] : ''); ?>"  />
 {$form_input_delimiters[1]}
 
 EOT;
@@ -170,13 +164,24 @@ EOT;
 $view .= <<<EOT
 
 
-{$form_input_delimiters[0]}
-        <?php echo form_submit( 'submit', '$action_label'); ?> or <a href="/admin/{$controller_name}/{$module_name_lower}">Cancel</a>
-{$form_input_delimiters[1]}
-
-<?php echo form_close(); ?>
-
+	<div class="text-right">
+		<br/>
+		<input type="submit" name="submit" value="{$action_label} {$module_name}" /> or <?php echo anchor('admin/{$controller_name}/{$module_name_lower}', 'Cancel'); ?>
+	</div>
 EOT;
+if($action_name != 'create') {
+$view .= '
+	<div class="box delete rounded">
+		<a class="button" id="delete-me" href="<?php echo site_url(\'admin/'.$controller_name.'/'.$module_name_lower.'/delete/\'. $id); ?>" onclick="return confirm(\'Are you sure you want to delete this '.$module_name_lower.'?\')">Delete this '.$module_name.'</a>
+		
+		<h3>Delete this '.$module_name.'</h3>
+		
+		<p>[This is more text you can edit]</p>
+	</div>
+<?php echo form_close(); ?>
+';
+}
+
 
 echo $view;
 ?>

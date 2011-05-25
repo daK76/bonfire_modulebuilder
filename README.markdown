@@ -4,7 +4,7 @@ Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Contro
 
 - Includes form validation
 - Retain POST values on page refresh, form is auto populated with POST
-- Show each field error inline.
+- Show each field error
 
 ## Install
 

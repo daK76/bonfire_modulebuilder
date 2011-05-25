@@ -88,10 +88,6 @@ If DB field type is "enum" or "set", please enter the values using this format: 
 		<label for="db_required">Require DB SQL</label>
 		<input name="db_required" id="db_required" type="checkbox" value="1" <?php echo set_checkbox("db_required", "1"); ?> class="checkbox" />
 		</div>
-		<div class="input_box">
-		<label for="ajax_processing">Require Javascript</label>
-		<input name="ajax_processing" id="ajax_processing" type="checkbox" value="1" <?php echo set_checkbox("ajax_processing", "1"); ?> class="checkbox" />
-		</div>
 	</fieldset>
 		<div class="input_box">
 
