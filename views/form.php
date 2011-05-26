@@ -55,6 +55,7 @@ If DB field type is "enum" or "set", please enter the values using this format: 
 			<input name="contexts[]" id="contexts" type="checkbox" value="public" <?php echo set_checkbox("contexts[]", "public"); ?> class="checkbox" /> Public
 		</div>
 		<div class="input_box">
+		<?php echo form_error("contexts"); ?>
 		<?php echo form_error("form_action"); ?>
 			<label for="form_action">Controller Actions</label>
 
