@@ -1,10 +1,11 @@
 ## ModuleBuilder
 
-Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Controllers, views, models, migrations and javascript files are build very quickly by filling out a single form
+Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Controllers, views, models, language, migration and Javascript files are built very quickly by filling out a single form
 
 - Includes form validation
 - Retain POST values on page refresh, form is auto populated with POST
 - Show each field error
+- English Language file generated
 
 ## Install
 
@@ -18,6 +19,7 @@ Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Contro
 - You will see the list of generated files
 - If generated, rename the Migrations file (adding the correct number) and move it into the db/migrations folder
 - You will need to edit the generated code as required
+- Edit the language file and add your own as required
 
 ## Configuration modulebuilder/config/modulebuilder.php
 

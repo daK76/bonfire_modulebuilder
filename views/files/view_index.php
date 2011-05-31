@@ -14,7 +14,7 @@ $view = '
 					<div class="list-item" data-id="<?php echo $record[\''.$primary_key_field.'\']; ?>">
 						<p>
 							<b><?php echo $record[\''.$primary_key_field.'\']; ?></b><br/>
-							<span class="small">Edit this to suit your needs</span>
+							<span class="small"><?php echo lang(\''.$module_name_lower.'_edit_text\'); ?></span>
 						</p>
 					</div>
 				<?php endforeach; ?>
@@ -24,7 +24,7 @@ $view = '
 	<?php else: ?>
 	
 	<div class="notification attention">
-		<p>There aren\'t any '.$module_name_lower.' in the system. <?php echo anchor(\'admin/'.$controller_name.'/'.$module_name_lower.'/create\', \'Create a new '.$module_name.'.\', array("class" => "ajaxify")) ?></p>
+		<p><?php echo lang(\''.$module_name_lower.'_no_records\'); ?> <?php echo anchor(\'admin/'.$controller_name.'/'.$module_name_lower.'/create\', lang(\''.$module_name_lower.'_create_new\'), array("class" => "ajaxify")) ?></p>
 	</div>
 	
 	<?php endif; ?>
@@ -34,11 +34,11 @@ $view = '
 		<div class="scrollable" id="ajax-content">
 				
 			<div class="box create rounded">
-				<a class="button good ajaxify" href="/admin/'.$controller_name.'/'.$module_name_lower.'/create">Create New '.$module_name.'</a>
+				<a class="button good ajaxify" href="/admin/'.$controller_name.'/'.$module_name_lower.'/create"><?php echo lang(\''.$module_name_lower.'_create_new_button\');?></a>
 
-				<h3>Create A New '.$module_name.'</h3>
+				<h3><?php echo lang(\''.$module_name_lower.'_create_new\');?></h3>
 
-				<p>Edit this text as you see fit.</p>
+				<p><?php echo lang(\''.$module_name_lower.'_edit_text\'); ?></p>
 			</div>
 			<br />
 				<?php if (isset($records) && is_array($records) && count($records)) : ?>
@@ -61,7 +61,7 @@ for($counter=1; $field_total >= $counter; $counter++)
 		<th>'. set_value("view_field_label$counter").'</th>';
 }
 
-$view .= '<th>Actions</th>
+$view .= '<th><?php echo lang(\''.$module_name_lower.'_actions\'); ?></th>
 		</thead>
 		<tbody>
 <?php

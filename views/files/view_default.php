@@ -166,17 +166,17 @@ $view .= <<<EOT
 
 	<div class="text-right">
 		<br/>
-		<input type="submit" name="submit" value="{$action_label} {$module_name}" /> or <?php echo anchor('admin/{$controller_name}/{$module_name_lower}', 'Cancel'); ?>
+		<input type="submit" name="submit" value="{$action_label} {$module_name}" /> or <?php echo anchor('admin/{$controller_name}/{$module_name_lower}', lang('{$module_name_lower}_cancel')); ?>
 	</div>
 EOT;
 if($action_name != 'create') {
 $view .= '
 	<div class="box delete rounded">
-		<a class="button" id="delete-me" href="<?php echo site_url(\'admin/'.$controller_name.'/'.$module_name_lower.'/delete/\'. $id); ?>" onclick="return confirm(\'Are you sure you want to delete this '.$module_name_lower.'?\')">Delete this '.$module_name.'</a>
+		<a class="button" id="delete-me" href="<?php echo site_url(\'admin/'.$controller_name.'/'.$module_name_lower.'/delete/\'. $id); ?>" onclick="return confirm(\'<?php echo lang(\''.$module_name_lower.'_delete_confirm\'); ?>\')"><?php echo lang(\''.$module_name_lower.'_delete_record\'); ?></a>
 		
-		<h3>Delete this '.$module_name.'</h3>
+		<h3><?php echo lang(\''.$module_name_lower.'_delete_record\'); ?></h3>
 		
-		<p>[This is more text you can edit]</p>
+		<p><?php echo lang(\''.$module_name_lower.'_edit_text\'); ?></p>
 	</div>
 <?php echo form_close(); ?>
 ';

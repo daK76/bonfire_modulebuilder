@@ -11,13 +11,10 @@ $controller .= ' {
  		parent::__construct();
 		$this->load->library(\'form_validation\');
 		$this->load->helper(\'form\');
-		$this->load->helper(\'url\');';
-		if( $db_required ) {
-		$controller .= '
-		$this->load->model(\''.$module_name_lower.'_model\');';
-		}
-$controller .= '
-
+		$this->load->helper(\'url\');
+		$this->load->model(\''.$module_name_lower.'_model\');
+		$this->lang->load(\''.$module_name_lower.'\');
+			
 		Assets::add_js($this->load->view(\''.$controller_name.'/js\', null, true), \'inline\');
 	}
 	
@@ -36,7 +33,7 @@ $controller .= '
 		Template::set(\'records\', $this->'.$module_name_lower.'_model->find_all());
 		if (!Template::get("toolbar_title"))
 		{
-			Template::set("toolbar_title", "Manage '.$module_name.'");
+			Template::set("toolbar_title", lang("'.$module_name_lower.'_manage"));
 		}
 		Template::render();
 	}
@@ -52,16 +49,16 @@ $controller .= '
 		{
 			if ($this->save_'.$module_name_lower.'())
 			{
-				Template::set_message(\''.$module_name.' successfully created.\', \'success\');
+				Template::set_message(lang("'.$module_name_lower.'_create_success"), \'success\');
 				Template::redirect(\'/admin/'.$controller_name.'/'.$module_name_lower.'\');
 			}
 			else 
 			{
-				Template::set_message(\'There was a problem creating the '.$module_name_lower.': \'. $this->'.$module_name_lower.'_model->error, \'error\');
+				Template::set_message(lang("'.$module_name_lower.'_create_failure") . $this->'.$module_name_lower.'_model->error, \'error\');
 			}
 		}
 	
-		Template::set(\'toolbar_title\', \'Create New '.$module_name.'\');
+		Template::set(\'toolbar_title\', lang("'.$module_name_lower.'_create_new_button"));
 		Template::set_view(\''.$controller_name.'/create\');
 		Template::render();
 	}
@@ -76,7 +73,7 @@ $controller .= '
 		
 		if (empty($id))
 		{
-			Template::set_message(\'Invalid '.$module_name.' ID.\', \'error\');
+			Template::set_message(lang("'.$module_name_lower.'_invalid_id"), \'error\');
 			redirect(\'/admin/'.$controller_name.'/'.$module_name_lower.'\');
 		}
 	
@@ -84,17 +81,17 @@ $controller .= '
 		{
 			if ($this->save_'.$module_name_lower.'(\'update\', $id))
 			{
-				Template::set_message(\''.$module_name.' successfully saved.\', \'success\');
+				Template::set_message(lang("'.$module_name_lower.'_edit_success"), \'success\');
 			}
 			else 
 			{
-				Template::set_message(\'There was a problem saving the '.$module_name_lower.': \'. $this->'.$module_name_lower.'_model->error, \'error\');
+				Template::set_message(lang("'.$module_name_lower.'_edit_failure") . $this->'.$module_name_lower.'_model->error, \'error\');
 			}
 		}
 		
 		Template::set(\''.$module_name_lower.'\', $this->'.$module_name_lower.'_model->find($id));
 	
-		Template::set(\'toolbar_title\', \'Edit '.$module_name.'\');
+		Template::set(\'toolbar_title\', lang("'.$module_name_lower.'_edit_heading"));
 		Template::set_view(\''.$controller_name.'/edit\');
 		Template::render();		
 	}
@@ -112,10 +109,10 @@ $controller .= '
 		{	
 			if ($this->'.$module_name_lower.'_model->delete($id))
 			{
-				Template::set_message(\'The '.$module_name.' was successfully deleted.\', \'success\');
+				Template::set_message(lang("'.$module_name_lower.'_delete_success"), \'success\');
 			} else
 			{
-				Template::set_message(\'We could not delete the '.$module_name_lower.': \'. $this->'.$module_name_lower.'_model->error, \'error\');
+				Template::set_message(lang("'.$module_name_lower.'_delete_failure") . $this->'.$module_name_lower.'_model->error, \'error\');
 			}
 		}
 		

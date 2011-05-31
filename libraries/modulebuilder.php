@@ -61,6 +61,7 @@ class Modulebuilder
 		$content['controllers'] = FALSE;
 		$content['model'] = FALSE;
 		$content['sql'] = FALSE;
+		$content['lang'] = FALSE;
 
 		// Build the files
 		if( $field_total ) {
@@ -81,10 +82,16 @@ class Modulebuilder
 				}
 				$content['views'][$context_name]['js'] = $this->build_view($field_total, $module_name, $context_name, 'js', $this->options['form_action_options'][$action_name], $primary_key_field, $form_input_delimiters);
 			}
-			// db based files - model and sql
+
+			// build the lang file
+			$content['lang'] = $this->build_lang($module_file_name);
+
+			// build the model file
+			$content['model'] = $this->build_model($field_total, $module_file_name, $action_names, $primary_key_field);
+			
+			// db based files - migrations
 			if( $db_required ) {
 				$content['sql'] =  $this->build_sql($field_total, $module_file_name, $primary_key_field);
-				$content['model'] = $this->build_model($field_total, $module_file_name, $action_names, $primary_key_field);
 			}
 		}
 
@@ -117,6 +124,7 @@ class Modulebuilder
 		$data['controllers'] = $content['controllers'];
 		$data['model'] = $content['model'];
 		$data['sql'] = $content['sql'];
+		$data['lang'] = $content['lang'];
 
 		return $data;
 	}
@@ -142,6 +150,8 @@ class Modulebuilder
 			@mkdir($this->options['output_path']."{$module_name}/controllers/",0777);
 			@mkdir($this->options['output_path']."{$module_name}/models/",0777);
 			@mkdir($this->options['output_path']."{$module_name}/views/",0777);
+			@mkdir($this->options['output_path']."{$module_name}/language/",0777);
+			@mkdir($this->options['output_path']."{$module_name}/language/english/",0777);
 
 			foreach($content as $type => $value)
 			{
@@ -181,32 +191,39 @@ class Modulebuilder
 					}
 				}
 				else {
-					$ext = 'php';
-					$file_name = $module_name;
-					switch ($type)
-					{
-						case 'sql':
-							$file_name = "Install_".$file_name;
-							break;
-						case 'model':
-							$file_name .= "_model";
-							break;
+					// check if the content is blank
+					if($value != '') {
+						$ext = 'php';
+						$file_name = $module_name;
+						$path = $this->options['output_path']."{$module_name}/{$type}s";
+						switch ($type)
+						{
+							case 'sql':
+								$file_name = "Install_".$file_name;
+								break;
+							case 'model':
+								$file_name .= "_model";
+								break;
+							case 'lang':
+								$file_name .= "_lang";
+								$path = $this->options['output_path']."{$module_name}/language/english";
+								break;
 
-						default:
+							default:
+								break;
+						}
+
+						if( !is_dir($path) ) {
+							$path = $this->options['output_path']."{$module_name}";
+						}
+
+						if ( ! write_file($path."/{$file_name}." . $ext, $value))
+						{
+							log_message('error', "failed to write file $path/{$file_name}/");
+							$ret_val['status'] = FALSE;
+							$ret_val['error'] = $error_msg. " " .$path;
 							break;
-					}
-
-					$path = $this->options['output_path']."{$module_name}/{$type}s";
-					if( !is_dir($path) ) {
-						$path = $this->options['output_path']."{$module_name}";
-					}
-
-					if ( ! write_file($path."/{$file_name}." . $ext, $value))
-					{
-						log_message('error', "failed to write file $path/{$file_name}/");
-						$ret_val['status'] = FALSE;
-						$ret_val['error'] = $error_msg. " " .$path;
-						break;
+						}
 					}
 				}
 			}
@@ -323,6 +340,27 @@ class Modulebuilder
 		$model = $this->CI->load->view('files/model', $data, TRUE);
 
 		return $model;
+	}
+	
+	// --------------------------------------------------------------------
+
+	
+   /** 
+    * function build_model()
+    *
+    * write view file
+    * @access private
+    * @param integer $field_total
+    * @return string
+    */
+
+	private function build_lang($module_name)
+	{
+		$data['module_name'] = $module_name;
+		$data['module_name_lower'] = strtolower($module_name);
+		$lang = $this->CI->load->view('files/lang', $data, TRUE);
+
+		return $lang;
 	}
 	
 	// --------------------------------------------------------------------
