@@ -44,7 +44,7 @@ Lets you build a full module for the Bonfire (http://cibonfire.com/) app. Contro
     /*
     * html tags used around the form elements
     */
-	$config[ 'modulebuilder' ][ 'form_input_delimiters' ] = array('<p>','</p>');
+	$config[ 'modulebuilder' ][ 'form_input_delimiters' ] = array('<div>','</div>');
 
     /*
     * html tags used around the error messages
