@@ -20,7 +20,7 @@ $config[ 'modulebuilder' ][ 'primary_key_field' ] = 'id';
 /*
  * default form input delimiters
  */
-$config[ 'modulebuilder' ][ 'form_input_delimiters' ] = array('<p>','</p>');
+$config[ 'modulebuilder' ][ 'form_input_delimiters' ] = array('<div>','</div>');
 
 /*
  * default form error delimiters

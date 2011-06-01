@@ -11,10 +11,10 @@ if( isset($'.$module_name_lower.') ) {
 	$'.$module_name_lower.' = (array)$'.$module_name_lower.';
 }
 $id = isset($'.$module_name_lower.'[\''.$primary_key_field.'\']) ? "/".$'.$module_name_lower.'[\''.$primary_key_field.'\'] : \'\';
-$attributes = array("class" => "constrained ajax-form", "'.$primary_key_field.'" => "'.$controller_name.'_'.$action_name.'");
-echo form_open("admin/'.$controller_name.'/'.$module_name_lower.'/'.$action_name.'" . $id, $attributes);
 ';
 $view .= '?>';
+$view .= '
+<?php echo form_open($this->uri->uri_string(), \'class="constrained ajax-form"\'); ?>';
 
 for($counter=1; $field_total >= $counter; $counter++)
 {
@@ -114,7 +114,7 @@ EOT;
 							  \'example_value1\'    => \'example option 1\'
 							); ?>
 
-        <br /><?php echo form_dropdown(\''.$field_name.'\', $options, set_value(\''.$field_name.'\'))?>
+        <?php echo form_dropdown(\''.$field_name.'\', $options, set_value(\''.$field_name.'\'))?>
 '.$form_input_delimiters[1].'                                             
                         ';
 		break;
